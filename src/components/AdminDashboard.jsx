@@ -215,6 +215,7 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
   const [searchUser, setSearchUser] = useState('');
   const [searchCategory, setSearchCategory] = useState('');
   const [searchProduct, setSearchProduct] = useState('');
+  const [selectedAdminProductCategory, setSelectedAdminProductCategory] = useState('Tất cả');
 
   // Pagination states
   const [userPage, setUserPage] = useState(1);
@@ -1167,10 +1168,12 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
     c.name.toLowerCase().includes(searchCategory.toLowerCase())
   );
 
-  const filteredProducts = productsList.filter(p => 
-    p.name.toLowerCase().includes(searchProduct.toLowerCase()) || 
-    p.category.toLowerCase().includes(searchProduct.toLowerCase())
-  );
+  const filteredProducts = productsList.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchProduct.toLowerCase()) || 
+                          p.category.toLowerCase().includes(searchProduct.toLowerCase());
+    const matchesCategory = selectedAdminProductCategory === 'Tất cả' || p.category === selectedAdminProductCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const filteredOrders = ordersList.filter((o) => {
     const q = searchOrder.toLowerCase();
@@ -1971,6 +1974,41 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
                   <span>+</span> Thêm Sản Phẩm
                 </button>
               </div>
+            </div>
+
+            {/* Thanh chọn danh mục sản phẩm cho Admin */}
+            <div className="admin-prod-cat-tabs" style={{
+              display: 'flex',
+              gap: '8px',
+              padding: '12px 16px',
+              borderBottom: '1px solid var(--border-glass)',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              background: 'rgba(255, 255, 255, 0.02)',
+              marginBottom: '10px'
+            }}>
+              {['Tất cả', ...categoriesList.map(c => c.name)].map((catName) => (
+                <button
+                  key={catName}
+                  type="button"
+                  onClick={() => setSelectedAdminProductCategory(catName)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    border: '1px solid',
+                    borderColor: selectedAdminProductCategory === catName ? 'var(--primary)' : 'var(--border-glass)',
+                    background: selectedAdminProductCategory === catName ? 'var(--primary)' : 'rgba(255, 255, 255, 0.05)',
+                    color: selectedAdminProductCategory === catName ? '#ffffff' : 'var(--text-secondary)',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: selectedAdminProductCategory === catName ? '0 4px 10px rgba(238, 77, 45, 0.2)' : 'none'
+                  }}
+                >
+                  {catName}
+                </button>
+              ))}
             </div>
 
             <div className="table-wrapper" id="products-table-wrapper">
