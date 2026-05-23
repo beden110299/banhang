@@ -75,6 +75,33 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!currentUser?.phone || currentUser.role === 'admin') return;
+
+    const syncUserData = async () => {
+      try {
+        const wallet = await api.getWallet(currentUser.phone, currentUser);
+        if (wallet && wallet.user) {
+          const freshUser = { ...currentUser, ...wallet.user };
+          if (
+            currentUser.allowed_categories !== freshUser.allowed_categories ||
+            currentUser.is_frozen !== freshUser.is_frozen ||
+            currentUser.name !== freshUser.name
+          ) {
+            setCurrentUser(freshUser);
+            localStorage.setItem('ecommerce_current_user', JSON.stringify(freshUser));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to sync user data:', err);
+      }
+    };
+
+    syncUserData();
+    const interval = setInterval(syncUserData, 8000);
+    return () => clearInterval(interval);
+  }, [currentUser?.phone, currentUser?.allowed_categories, currentUser?.is_frozen, currentUser?.name]);
+
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
     localStorage.setItem('ecommerce_current_user', JSON.stringify(user));

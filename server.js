@@ -425,9 +425,12 @@ app.post('/api/auth/register', checkDbConnection, async (req, res) => {
     }
 
     // 3. Register user
+    const catRes = await db.query('SELECT name FROM categories ORDER BY id ASC LIMIT 1');
+    const defaultCatName = catRes.rows.length > 0 ? catRes.rows[0].name : 'Mỹ Phẩm 10%';
+
     await db.query(
-      "INSERT INTO users (name, phone, password, role, is_frozen, allowed_categories) VALUES ($1, $2, $3, $4, FALSE, 'Mỹ Phẩm 10%')",
-      [name, phone, password, 'user']
+      "INSERT INTO users (name, phone, password, role, is_frozen, allowed_categories) VALUES ($1, $2, $3, $4, FALSE, $5)",
+      [name, phone, password, 'user', defaultCatName]
     );
     await db.query(
       'INSERT INTO wallets (phone, balance) VALUES ($1, 0) ON CONFLICT (phone) DO NOTHING',
@@ -649,9 +652,12 @@ app.post('/api/members', checkDbConnection, async (req, res) => {
       return res.status(409).json({ error: 'Trùng lặp', message: 'Số điện thoại này đã đăng ký.' });
     }
 
+    const catRes = await db.query('SELECT name FROM categories ORDER BY id ASC LIMIT 1');
+    const defaultCatName = catRes.rows.length > 0 ? catRes.rows[0].name : 'Mỹ Phẩm 10%';
+
     await db.query(
-      "INSERT INTO users (name, phone, password, role, is_frozen, allowed_categories) VALUES ($1, $2, $3, $4, FALSE, 'Mỹ Phẩm 10%')",
-      [name.trim(), phone.trim(), password, role]
+      "INSERT INTO users (name, phone, password, role, is_frozen, allowed_categories) VALUES ($1, $2, $3, $4, FALSE, $5)",
+      [name.trim(), phone.trim(), password, role, defaultCatName]
     );
     await db.query(
       'INSERT INTO wallets (phone, balance) VALUES ($1, 0) ON CONFLICT (phone) DO NOTHING',
