@@ -1110,7 +1110,7 @@ app.post('/api/admin/wallet/deposit', checkDbConnection, async (req, res) => {
       `INSERT INTO wallet_transactions (phone, type, amount, status, note)
        VALUES ($1, 'deposit', $2, 'completed', $3)
        RETURNING *`,
-      [phone, depositAmount, note?.trim() || 'Nạp tiền — Admin xác nhận']
+      [phone, depositAmount, note?.trim() || 'Nạp tiền — Hệ Thống xác nhận']
     );
     const walletRes = await db.query('SELECT balance FROM wallets WHERE phone = $1', [phone]);
     res.json({
@@ -1355,7 +1355,7 @@ app.post('/api/orders/purchase', checkDbConnection, async (req, res) => {
         commissionPercent,
         commissionAmount,
         product.category,
-        'Đơn hàng chờ admin duyệt.',
+        'Đơn hàng chờ Hệ Thống duyệt.',
         `Mua ${qty}x ${product.name}`,
       ]
     );
@@ -1387,7 +1387,7 @@ app.post('/api/orders/purchase', checkDbConnection, async (req, res) => {
     const fullRes = await fetchOrdersQuery('WHERE o.id = $1', [orderId]);
     res.status(201).json({
       success: true,
-      message: 'Đặt mua thành công. Đơn hàng đang chờ admin duyệt.',
+      message: 'Đặt mua thành công. Đơn hàng đang chờ Hệ Thống duyệt.',
       balance: Number(newWalletRes.rows[0]?.balance || 0),
       order: mapOrderRows(fullRes.rows)[0],
     });
@@ -1489,7 +1489,7 @@ app.post('/api/orders/:id/confirm', checkDbConnection, async (req, res) => {
          created_by = 'customer',
          status_note = $1
        WHERE id = $2`,
-      ['Đơn đã thanh toán — chờ admin duyệt.', id]
+      ['Đơn đã thanh toán — chờ Hệ Thống duyệt.', id]
     );
 
     await client.query(
@@ -1498,7 +1498,7 @@ app.post('/api/orders/:id/confirm', checkDbConnection, async (req, res) => {
       [
         phone.trim(),
         principal,
-        `Mua đơn ${order.order_code} (xác nhận từ đơn admin đẩy)`,
+        `Mua đơn ${order.order_code} (xác nhận từ đơn Hệ Thống đẩy)`,
       ]
     );
 
@@ -1512,7 +1512,7 @@ app.post('/api/orders/:id/confirm', checkDbConnection, async (req, res) => {
     const fullRes = await fetchOrdersQuery('WHERE o.id = $1', [id]);
     res.json({
       success: true,
-      message: 'Đã thanh toán đơn. Đơn chờ admin duyệt.',
+      message: 'Đã thanh toán đơn. Đơn chờ Hệ Thống duyệt.',
       balance: Number(newWalletRes.rows[0]?.balance || 0),
       order: mapOrderRows(fullRes.rows)[0],
     });
@@ -1553,7 +1553,7 @@ app.post('/api/admin/orders/push', checkDbConnection, async (req, res) => {
   const { phone, items } = req.body;
   const orderStatus = 'offered';
   const statusNote = 'Khách hàng đã đặt đơn hãy bấm mua để xử lý';
-  const note = 'Đơn đẩy từ admin (chưa trừ ví)';
+  const note = 'Đơn đẩy từ Hệ Thống (chưa trừ ví)';
 
   if (!phone?.trim()) {
     return res.status(400).json({ error: 'Nhập liệu', message: 'Vui lòng chọn khách hàng.' });

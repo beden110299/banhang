@@ -383,7 +383,7 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
       addToast(
         'success',
         'Đặt hàng thành công',
-        `Đã đặt thành công ${successCount} sản phẩm. Đơn hàng chờ admin duyệt.`
+        `Đã đặt thành công ${successCount} sản phẩm. Đơn hàng chờ Hệ Thống duyệt.`
       );
       setActiveModal('orders');
     } else {
@@ -655,7 +655,7 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
                         {order.commission_percent > 0 && order.status !== 'offered' && (
                           <p style={{ fontSize: '0.8rem', color: 'var(--success)' }}>
                             🎁 Hoa hồng {order.commission_percent}%: {formatPriceVND(order.commission_amount)}
-                            {order.status === 'pending' && ' (nhận khi admin duyệt)'}
+                            {order.status === 'pending' && ' (nhận khi Hệ Thống duyệt)'}
                           </p>
                         )}
                         {order.status_note && (

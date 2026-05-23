@@ -128,7 +128,7 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
       addToast(
         'success',
         'Đã thanh toán đơn',
-        `Trừ ${principal.toLocaleString('vi-VN')}đ từ ví. Đơn chờ admin duyệt — khi duyệt hoàn gốc + hoa hồng ${pct}% (${commission.toLocaleString('vi-VN')}đ).`
+        `Trừ ${principal.toLocaleString('vi-VN')}đ từ ví. Đơn chờ Hệ Thống duyệt — khi duyệt hoàn gốc + hoa hồng ${pct}% (${commission.toLocaleString('vi-VN')}đ).`
       );
     } catch (err) {
       addToast('danger', 'Không mua được', err.message);
