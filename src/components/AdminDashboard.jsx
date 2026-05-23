@@ -4,7 +4,7 @@ import { formatDateTime } from '../utils/format';
 import { ORDER_STATUS_OPTIONS, getOrderStatusLabel, getOrderStatusBadgeClass } from '../utils/orderStatus';
 import { getProductsNearPrice } from '../utils/productsByAmount';
 
-const DEFAULT_CATEGORIES = ['Mỹ Phẩm 10%', 'Điện Tử 20%', 'Điện Lạnh 30%', 'VIP 50%', 'Đặc Biệt 70%'];
+const DEFAULT_CATEGORIES = ['Mỹ Phẩm 10%', 'Điện Tử 20%', 'Điện Lạnh 30%', 'VIP 50%'];
 
 const DEFAULT_PRODUCTS = [
   {
@@ -70,14 +70,6 @@ const DEFAULT_PRODUCTS = [
     price: 50000000,
     desc: 'Thẻ thành viên VIP độc quyền Aura Store, đặc quyền hưởng ưu đãi giảm giá 30% và chăm sóc đặc biệt.',
     icon: '💳'
-  },
-  {
-    id: 9,
-    name: 'Aura Special Platinum Ring',
-    category: 'Đặc Biệt 70%',
-    price: 150000000,
-    desc: 'Nhẫn bạch kim đính kim cương tự nhiên chế tác thủ công tinh xảo, đẳng cấp hoàng gia.',
-    icon: '💍'
   }
 ];
 
