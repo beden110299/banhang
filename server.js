@@ -260,9 +260,9 @@ const initDatabase = async () => {
       console.log('🌱 Seeded master Admin account: 0999999999 / admin123');
     }
 
-    // 4. Seed Categories (Force update to new percentage categories)
-    const catCheck = await db.query("SELECT * FROM categories WHERE name = 'Mỹ Phẩm 10%'");
-    if (catCheck.rows.length === 0) {
+    // 4. Seed Categories (Only if the table is completely empty to prevent wiping products)
+    const catCheck = await db.query("SELECT COUNT(*)::int AS count FROM categories");
+    if (catCheck.rows[0].count === 0) {
       // Clear old categories and products to avoid reference mismatch
       await db.query('TRUNCATE products RESTART IDENTITY CASCADE');
       await db.query('TRUNCATE categories RESTART IDENTITY CASCADE');
