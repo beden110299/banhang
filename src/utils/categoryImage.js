@@ -16,7 +16,7 @@ export function getCategoryFallbackImage(categoryName) {
     return 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=120&auto=format&fit=crop&q=80';
   }
   if (lowerCat.includes('điện lạnh')) {
-    return 'https://images.unsplash.com/photo-1571175432247-508b9818816f?w=120&auto=format&fit=crop&q=80';
+    return 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=120&auto=format&fit=crop&q=80';
   }
   if (lowerCat.includes('vip')) {
     return 'https://images.unsplash.com/photo-1589758438368-0ad531db3366?w=120&auto=format&fit=crop&q=80';
