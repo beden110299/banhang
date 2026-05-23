@@ -60,19 +60,7 @@ const CATEGORY_CATALOG = {
     priceMax: 480_000_000,
     picKeyword: 'luxury',
   },
-  'Đặc Biệt 70%': {
-    slug: 'dac-biet',
-    names: [
-      'Nhẫn kim cương', 'Vòng tay platinum', 'Túi limited edition', 'Đồng hồ tourbillon',
-      'Tranh nghệ thuật', 'Rượu vang cellar', 'Trà Shan Tuyết', 'Yến sào thượng hạng',
-      'Saffron Iran', 'Mật ong rừng', 'Set skincare haute', 'Robot AI premium',
-      'Xe đạp carbon', 'Golf set pro', 'Camera cinema', 'Drone 8K',
-      'Loa studio', 'Piano điện', 'Tủ rượu cigar', 'Bộ bàn ăn gỗ mun',
-    ],
-    priceMin: 35_000_000,
-    priceMax: 980_000_000,
-    picKeyword: 'premium',
-  },
+
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
