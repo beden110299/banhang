@@ -122,7 +122,6 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
     try {
       const result = await api.confirmOfferedOrder(order.id, currentUser.phone);
       setOfferedOrders((prev) => prev.filter((o) => o.id !== order.id));
-      setCartCount((prev) => prev + 1);
       const principal = order.principal_amount ?? order.total_amount;
       const commission = order.commission_amount ?? 0;
       const pct = order.commission_percent ?? 0;
