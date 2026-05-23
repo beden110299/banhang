@@ -1721,10 +1721,12 @@ body {
   border-top: 1px solid var(--border-glass);
   padding: 24px 40px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end; /* Align links with the right side of the container content */
   align-items: center;
   width: 100%;
-  margin-top: 60px;
+  max-width: 1400px; /* Matches storefront-wrapper max-width perfectly */
+  margin: 60px auto 0 auto; /* Center the footer container horizontally to align with products */
+  box-sizing: border-box;
 }
 
 .desktop-footer-links {
