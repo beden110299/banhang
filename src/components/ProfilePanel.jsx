@@ -85,6 +85,9 @@ export default function ProfilePanel({
   };
 
   const transactions = walletData?.transactions || [];
+  const totalCommission = transactions
+    .filter((tx) => tx.type === 'commission' && tx.status === 'completed')
+    .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
   const userInfo = walletData?.user || currentUser;
   const isUserFrozen = userInfo?.is_frozen === true || currentUser?.is_frozen === true;
@@ -281,9 +284,22 @@ export default function ProfilePanel({
             </div>
 
             <div className="profile-wallet glass-panel">
-              <div className="profile-wallet-header">
+              <div className="profile-wallet-header" style={{ marginBottom: '8px' }}>
                 <span className="profile-wallet-title">💳 Ví tiền</span>
                 <span className="profile-wallet-balance">{formatPriceVND(balance)}</span>
+              </div>
+              <div className="profile-wallet-commission" style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: '6px',
+                paddingBottom: '10px',
+                borderBottom: '1px dashed rgba(0, 0, 0, 0.08)',
+                marginBottom: '12px',
+                fontSize: '0.88rem'
+              }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Tổng hoa hồng đã nhận:</span>
+                <span style={{ color: '#10b981', fontWeight: '700' }}>{formatPriceVND(totalCommission)}</span>
               </div>
               <div className="profile-wallet-actions">
                 <button type="button" className="btn-primary profile-btn-deposit" onClick={handleDeposit}>
