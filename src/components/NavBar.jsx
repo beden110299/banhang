@@ -80,7 +80,7 @@ export default function NavBar({ storeName, currentUser, onLogout, currentView, 
         <div className="nav-links-group">
           {currentView !== 'admin' && (
             <span 
-              className="nav-item" 
+              className="nav-item navbar-cart-pill-desktop" 
               id="nav-item-home"
               style={{ 
                 cursor: 'pointer',

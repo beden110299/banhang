@@ -1214,6 +1214,10 @@ body {
     display: flex !important;
   }
 
+  .navbar-cart-pill-desktop {
+    display: none !important;
+  }
+
   /* Tap highlight prevention on touch devices */
   button, a, input, select, textarea, .nav-item, .category-btn {
     -webkit-tap-highlight-color: transparent;
