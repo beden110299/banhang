@@ -14,6 +14,8 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
   const [supportBootMessage, setSupportBootMessage] = useState(null);
   const [userOrders, setUserOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [offeredCount, setOfferedCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
   
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
@@ -280,6 +282,33 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
   }, [activeModal, currentUser?.phone]);
 
   useEffect(() => {
+    if (!currentUser?.phone || currentUser.role === 'admin') {
+      setOfferedCount(0);
+      setPendingCount(0);
+      return;
+    }
+
+    const checkNewOrders = async () => {
+      try {
+        const list = await api.getOrdersByPhone(currentUser.phone);
+        const offered = list.filter(o => o.status === 'offered' && o.created_by === 'admin');
+        setOfferedCount(offered.length);
+        const pending = list.filter(o => o.status === 'pending');
+        setPendingCount(pending.length);
+        if (activeModal === 'orders') {
+          setUserOrders(list);
+        }
+      } catch (err) {
+        console.error("Lỗi kiểm tra đơn hàng mới:", err);
+      }
+    };
+
+    checkNewOrders();
+    const interval = setInterval(checkNewOrders, 6000);
+    return () => clearInterval(interval);
+  }, [currentUser?.phone, activeModal]);
+
+  useEffect(() => {
     if (activeModal !== 'support' || !supportBootMessage) return;
     setSupportMessages((prev) => {
       const last = prev[prev.length - 1];
@@ -449,11 +478,39 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
           <span className={`desktop-footer-link ${currentView === 'home' && !activeModal ? 'active' : ''}`} onClick={() => handleTabClick('home')}>
             🏠 Trang Chủ
           </span>
-          <span className="desktop-footer-link" onClick={() => handleTabClick('store')}>
+          <span className="desktop-footer-link" onClick={() => handleTabClick('store')} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             🛒 Cửa Hàng
+            {offeredCount > 0 && (
+              <span style={{
+                backgroundColor: '#ef4444',
+                color: '#ffffff',
+                borderRadius: '10px',
+                padding: '2px 6px',
+                fontSize: '0.68rem',
+                fontWeight: '700',
+                marginLeft: '4px',
+                lineHeight: '1'
+              }}>
+                {offeredCount}
+              </span>
+            )}
           </span>
-          <span className="desktop-footer-link" onClick={() => handleTabClick('orders')}>
+          <span className="desktop-footer-link" onClick={() => handleTabClick('orders')} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
             📦 Đơn Hàng
+            {pendingCount > 0 && (
+              <span style={{
+                backgroundColor: '#ef4444',
+                color: '#ffffff',
+                borderRadius: '10px',
+                padding: '2px 6px',
+                fontSize: '0.68rem',
+                fontWeight: '700',
+                marginLeft: '4px',
+                lineHeight: '1'
+              }}>
+                {pendingCount}
+              </span>
+            )}
           </span>
           <span className="desktop-footer-link" onClick={() => handleTabClick('profile')}>
             👤 Của Tôi
@@ -520,6 +577,7 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
           className={`footer-nav-item ${(currentView === 'store' && !activeModal) ? 'active' : ''}`} 
           onClick={() => handleTabClick('store')}
           style={{
+            position: 'relative',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -542,12 +600,33 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
         >
           <span className="footer-nav-icon" style={{ fontSize: '1.15rem' }}>🏬</span>
           <span>Cửa Hàng</span>
+          {offeredCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '2px',
+              right: '18px',
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              borderRadius: '50%',
+              padding: '2px 5px',
+              fontSize: '0.6rem',
+              fontWeight: '700',
+              lineHeight: '1',
+              minWidth: '10px',
+              textAlign: 'center',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              border: '1.5px solid #ffffff'
+            }}>
+              {offeredCount}
+            </span>
+          )}
         </div>
         
         <div 
           className={`footer-nav-item ${activeModal === 'orders' ? 'active' : ''}`} 
           onClick={() => handleTabClick('orders')}
           style={{
+            position: 'relative',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -570,6 +649,26 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
         >
           <span className="footer-nav-icon" style={{ fontSize: '1.15rem' }}>📦</span>
           <span>Đơn Hàng</span>
+          {pendingCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '2px',
+              right: '18px',
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              borderRadius: '50%',
+              padding: '2px 5px',
+              fontSize: '0.6rem',
+              fontWeight: '700',
+              lineHeight: '1',
+              minWidth: '10px',
+              textAlign: 'center',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              border: '1.5px solid #ffffff'
+            }}>
+              {pendingCount}
+            </span>
+          )}
         </div>
         
         <div 

@@ -311,6 +311,16 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
     initDashboard();
   }, []);
 
+  // Background polling interval to fetch updates for orders, transactions and withdrawals in real-time
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isLoadedRef.current) {
+        handleRefreshSystemData(true);
+      }
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
+
   // On-demand system refresh function (cost-saving)
   const handleRefreshSystemData = async (silent = false) => {
     if (!isLoadedRef.current) return;
@@ -2071,6 +2081,9 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
     }
   };
 
+  const pendingOrdersCount = ordersList.filter((o) => o.status === 'pending').length;
+  const pendingWithdrawalsCount = pendingWithdrawals.length;
+
   return (
     <div className="admin-wrapper animate-fade-in" id="admin-view">
       {/* Tab Header Stats block */}
@@ -2171,11 +2184,49 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
         <button className={`admin-tab-btn ${activeTab === 'products' ? 'active' : ''}`} onClick={() => setActiveTab('products')} id="tab-btn-products">
           📦 Quản lý sản phẩm
         </button>
-        <button className={`admin-tab-btn ${activeTab === 'transactions' ? 'active' : ''}`} onClick={() => setActiveTab('transactions')} id="tab-btn-transactions">
+        <button
+          className={`admin-tab-btn ${activeTab === 'transactions' ? 'active' : ''}`}
+          onClick={() => setActiveTab('transactions')}
+          id="tab-btn-transactions"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+        >
           💳 Quản lý giao dịch
+          {pendingWithdrawalsCount > 0 && (
+            <span style={{
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              borderRadius: '10px',
+              padding: '2px 6px',
+              fontSize: '0.7rem',
+              fontWeight: '700',
+              marginLeft: '4px',
+              lineHeight: '1'
+            }}>
+              {pendingWithdrawalsCount}
+            </span>
+          )}
         </button>
-        <button className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')} id="tab-btn-orders">
+        <button
+          className={`admin-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+          onClick={() => setActiveTab('orders')}
+          id="tab-btn-orders"
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+        >
           🚚 Quản lý đơn hàng
+          {pendingOrdersCount > 0 && (
+            <span style={{
+              backgroundColor: '#ef4444',
+              color: '#ffffff',
+              borderRadius: '10px',
+              padding: '2px 6px',
+              fontSize: '0.7rem',
+              fontWeight: '700',
+              marginLeft: '4px',
+              lineHeight: '1'
+            }}>
+              {pendingOrdersCount}
+            </span>
+          )}
         </button>
       </div>
 
