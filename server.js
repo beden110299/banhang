@@ -267,11 +267,11 @@ const initDatabase = async () => {
       await db.query('TRUNCATE products RESTART IDENTITY CASCADE');
       await db.query('TRUNCATE categories RESTART IDENTITY CASCADE');
       
-      const defaultCats = ['Mỹ Phẩm 10%', 'Điện Tử 20%', 'Điện Lạnh 30%', 'VIP 50%', 'Đặc Biệt 70%'];
+      const defaultCats = ['Mỹ Phẩm 10%', 'Điện Tử 20%', 'Điện Lạnh 30%', 'VIP 50%'];
       for (const cat of defaultCats) {
         await db.query('INSERT INTO categories (name) VALUES ($1)', [cat]);
       }
-      console.log('🌱 Re-seeded categories list to: Mỹ Phẩm 10%, Điện Tử 20%, Điện Lạnh 30%, VIP 50%, Đặc Biệt 70%.');
+      console.log('🌱 Re-seeded categories list to: Mỹ Phẩm 10%, Điện Tử 20%, Điện Lạnh 30%, VIP 50%.');
       
       // Reseed products with matching categories
       const defaultProducts = [
@@ -330,13 +330,6 @@ const initDatabase = async () => {
           price: 50000000,
           desc: 'Thẻ thành viên VIP độc quyền Aura Store, đặc quyền hưởng ưu đãi giảm giá 30% và chăm sóc đặc biệt.',
           icon: '💳'
-        },
-        {
-          name: 'Aura Special Platinum Ring',
-          category: 'Đặc Biệt 70%',
-          price: 150000000,
-          desc: 'Nhẫn bạch kim đính kim cương tự nhiên chế tác thủ công tinh xảo, đẳng cấp hoàng gia.',
-          icon: '💍'
         }
       ];
 

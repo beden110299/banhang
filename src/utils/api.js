@@ -17,7 +17,6 @@ const DEFAULT_CATEGORIES = [
   { name: 'Điện Tử 20%', icon: '' },
   { name: 'Điện Lạnh 30%', icon: '' },
   { name: 'VIP 50%', icon: '' },
-  { name: 'Đặc Biệt 70%', icon: '' },
 ];
 
 export const normalizeCategories = (data) => {
@@ -42,8 +41,7 @@ const DEFAULT_PRODUCTS = [
   { id: 5, name: 'Tủ Lạnh Aura Inverter Mirror Door', category: 'Điện Lạnh 30%', price: 34500000, desc: 'Tủ lạnh mặt kính gương đen sang trọng, công suất inverter tiết kiệm điện 5 sao, kháng khuẩn nano.', icon: '❄️' },
   { id: 6, name: 'Điều Hòa Không Khí Aura WindFree', category: 'Điện Lạnh 30%', price: 18900000, desc: 'Điều hòa lọc bụi mịn siêu vi, làm lạnh êm dịu không gió buốt, điều khiển từ xa qua smartphone.', icon: '💨' },
   { id: 7, name: 'Royal Oak Chronograph Gold Edition', category: 'VIP 50%', price: 425000000, desc: 'Siêu phẩm đồng hồ chế tác giới hạn, vỏ vàng nguyên khối 18K, tuyệt tác nghệ thuật Haute Horlogerie.', icon: '👑' },
-  { id: 8, name: 'Aura VIP Privilege Membership Card', category: 'VIP 50%', price: 50000000, desc: 'Thẻ thành viên VIP độc quyền Aura Store, đặc quyền hưởng ưu đãi giảm giá 30% và chăm sóc đặc biệt.', icon: '💳' },
-  { id: 9, name: 'Aura Special Platinum Ring', category: 'Đặc Biệt 70%', price: 150000000, desc: 'Nhẫn bạch kim đính kim cương tự nhiên chế tác thủ công tinh xảo, đẳng cấp hoàng gia.', icon: '💍' }
+  { id: 8, name: 'Aura VIP Privilege Membership Card', category: 'VIP 50%', price: 50000000, desc: 'Thẻ thành viên VIP độc quyền Aura Store, đặc quyền hưởng ưu đãi giảm giá 30% và chăm sóc đặc biệt.', icon: '💳' }
 ];
 
 // Helper to seed localStorage
@@ -117,7 +115,7 @@ const offlineLogin = (phone, password) => {
       phone: '0999999999', 
       role: 'admin', 
       is_frozen: false, 
-      allowed_categories: 'Mỹ Phẩm 10%, Điện Tử 20%, Điện Lạnh 30%, VIP 50%, Đặc Biệt 70%' 
+      allowed_categories: 'Mỹ Phẩm 10%, Điện Tử 20%, Điện Lạnh 30%, VIP 50%' 
     };
   }
   const users = JSON.parse(localStorage.getItem(LOCAL_USERS) || '[]');
