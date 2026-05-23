@@ -1163,7 +1163,7 @@ body {
 }
 
 .navbar-cart-indicator {
-  display: flex;
+  display: none; /* Hidden on PC by default to avoid duplicates */
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.15);
@@ -1210,6 +1210,10 @@ body {
    RESPONSIVE DESIGN & DI ĐỘNG COMPATIBILITY (max-width: 768px)
    ========================================================================= */
 @media (max-width: 768px) {
+  .navbar-cart-indicator {
+    display: flex !important;
+  }
+
   /* Tap highlight prevention on touch devices */
   button, a, input, select, textarea, .nav-item, .category-btn {
     -webkit-tap-highlight-color: transparent;

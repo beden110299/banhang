@@ -87,33 +87,30 @@ export default function NavBar({ storeName, currentUser, onLogout, currentView, 
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'rgba(238, 77, 45, 0.08)',
-                color: 'var(--primary)',
-                border: '1px solid rgba(238, 77, 45, 0.25)',
+                background: 'rgba(255, 255, 255, 0.15)',
+                color: '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.35)',
                 padding: '8px 16px',
                 borderRadius: '20px',
                 fontWeight: '700',
                 fontSize: '0.85rem',
                 transition: 'all 0.2s ease-in-out',
-                boxShadow: '0 2px 6px rgba(238, 77, 45, 0.1)'
+                boxShadow: 'none'
               }}
               onClick={() => setActiveModal('cart')}
               onMouseOver={(e) => { 
-                e.currentTarget.style.background = 'var(--primary)';
-                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.28)';
+                e.currentTarget.style.borderColor = '#ffffff';
                 e.currentTarget.style.transform = 'scale(1.03)';
-                const badge = e.currentTarget.querySelector('#nav-item-cart-count');
-                if (badge) badge.style.color = '#ffffff';
               }}
               onMouseOut={(e) => { 
-                e.currentTarget.style.background = 'rgba(238, 77, 45, 0.08)';
-                e.currentTarget.style.color = 'var(--primary)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.35)';
                 e.currentTarget.style.transform = 'scale(1)';
-                const badge = e.currentTarget.querySelector('#nav-item-cart-count');
-                if (badge) badge.style.color = 'var(--primary)';
               }}
             >
-              🛒 Giỏ hàng: <strong style={{ color: 'var(--primary)', transition: 'color 0.2s' }} id="nav-item-cart-count">{cartCount}</strong>
+              <span>🛒 Giỏ hàng</span>
+              <span className="navbar-cart-badge" id="nav-item-cart-count">{cartCount}</span>
             </span>
           )}
           
