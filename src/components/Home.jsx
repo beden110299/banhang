@@ -198,16 +198,7 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
   if (currentUser?.role !== 'admin' && currentView === 'store') {
     return (
       <div className="storefront-wrapper animate-fade-in" id="store-pushed-view" style={{ padding: '16px', minHeight: 'calc(100vh - 120px)' }}>
-        {/* Floating Cart Counter */}
-        <div 
-          className="floating-cart" 
-          id="floating-cart" 
-          onClick={() => setActiveModal('cart')}
-          style={{ cursor: 'pointer' }}
-        >
-          <span className="cart-icon">🛒</span>
-          <span className="cart-label" id="cart-count">Giỏ hàng: {cartCount}</span>
-        </div>
+
 
         <section className="offered-orders-section" id="offered-orders-section" style={{ marginBottom: '28px' }}>
           <h2 className="section-title" style={{ color: 'var(--primary)', borderBottom: '2px solid var(--primary)', paddingBottom: '8px', marginBottom: '20px' }}>
@@ -475,16 +466,7 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
           </header>
         )}
 
-        {/* Floating Cart Counter */}
-        <div 
-          className="floating-cart" 
-          id="floating-cart"
-          onClick={() => setActiveModal('cart')}
-          style={{ cursor: 'pointer', zIndex: 4 }}
-        >
-          <span className="cart-icon">🛒</span>
-          <span className="cart-label" id="cart-count">Giỏ hàng: {cartCount}</span>
-        </div>
+
       </div>
 
       {offeredOrders.length > 0 && currentUser?.role !== 'admin' && currentView === 'store' && (

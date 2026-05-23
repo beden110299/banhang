@@ -80,12 +80,40 @@ export default function NavBar({ storeName, currentUser, onLogout, currentView, 
         <div className="nav-links-group">
           {currentView !== 'admin' && (
             <span 
-              className={`nav-item ${currentView === 'home' ? 'active' : ''}`} 
+              className="nav-item" 
               id="nav-item-home"
-              style={{ cursor: 'pointer' }}
-              onClick={() => setCurrentView('home')}
+              style={{ 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'rgba(238, 77, 45, 0.08)',
+                color: 'var(--primary)',
+                border: '1px solid rgba(238, 77, 45, 0.25)',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontWeight: '700',
+                fontSize: '0.85rem',
+                transition: 'all 0.2s ease-in-out',
+                boxShadow: '0 2px 6px rgba(238, 77, 45, 0.1)'
+              }}
+              onClick={() => setActiveModal('cart')}
+              onMouseOver={(e) => { 
+                e.currentTarget.style.background = 'var(--primary)';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.transform = 'scale(1.03)';
+                const badge = e.currentTarget.querySelector('#nav-item-cart-count');
+                if (badge) badge.style.color = '#ffffff';
+              }}
+              onMouseOut={(e) => { 
+                e.currentTarget.style.background = 'rgba(238, 77, 45, 0.08)';
+                e.currentTarget.style.color = 'var(--primary)';
+                e.currentTarget.style.transform = 'scale(1)';
+                const badge = e.currentTarget.querySelector('#nav-item-cart-count');
+                if (badge) badge.style.color = 'var(--primary)';
+              }}
             >
-              Cửa hàng
+              🛒 Giỏ hàng: <strong style={{ color: 'var(--primary)', transition: 'color 0.2s' }} id="nav-item-cart-count">{cartCount}</strong>
             </span>
           )}
           
