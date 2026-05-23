@@ -59,8 +59,14 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
 
     if (type === 'crisp') {
       if (window.$crisp) return; // Already injected
+      
+      // Smart extraction for Crisp ID (extract UUID v4 pattern if user pasted the entire script block)
+      const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+      const match = script.match(uuidRegex);
+      const crispId = match ? match[0] : script.trim();
+
       window.$crisp = [];
-      window.CRISP_WEBSITE_ID = script.trim();
+      window.CRISP_WEBSITE_ID = crispId;
       (function() {
         var d = document;
         var s = d.createElement("script");
@@ -72,12 +78,18 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
     } 
     else if (type === 'tawk') {
       if (window.Tawk_API) return; // Already injected
+      
+      // Smart extraction for Tawk.to URL (extract embed URL if user pasted the entire script block)
+      const tawkUrlRegex = /https:\/\/embed\.tawk\.to\/[a-zA-Z0-9]+\/[a-zA-Z0-9]+/i;
+      const tawkMatch = script.match(tawkUrlRegex);
+      const tawkUrl = tawkMatch ? tawkMatch[0] : script.trim();
+
       window.Tawk_API = window.Tawk_API || {};
       window.Tawk_LoadStart = new Date();
       (function() {
         var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
         s1.async = true;
-        s1.src = script.trim(); // The direct embed URL
+        s1.src = tawkUrl; // The direct embed URL
         s1.charset = 'UTF-8';
         s1.id = "tawk-cskh-script";
         s1.setAttribute('crossorigin', '*');
@@ -195,9 +207,16 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
           const elements = document.querySelectorAll(selector);
           elements.forEach(el => {
             if (isSupportOpen && type !== 'built_in') {
-              el.style.setProperty('display', 'block', 'important');
-              el.style.setProperty('visibility', 'visible', 'important');
-              el.style.setProperty('opacity', '1', 'important');
+              // For official Crisp/Tawk widgets, remove our forced inline styles so they use their native CSS layout (e.g. flex/fixed)
+              if (selector.includes('crisp') || selector.includes('tawk')) {
+                el.style.removeProperty('display');
+                el.style.removeProperty('visibility');
+                el.style.removeProperty('opacity');
+              } else {
+                el.style.setProperty('display', 'block', 'important');
+                el.style.setProperty('visibility', 'visible', 'important');
+                el.style.setProperty('opacity', '1', 'important');
+              }
             } else {
               el.style.setProperty('display', 'none', 'important');
               el.style.setProperty('visibility', 'hidden', 'important');
