@@ -282,8 +282,12 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
         setUsersList(users);
         setProductsList(prods);
       } else if (tabName === 'transactions') {
-        const txs = await api.getAdminTransactions();
+        const [txs, pending] = await Promise.all([
+          api.getAdminTransactions().catch(() => []),
+          api.getPendingWithdrawals().catch(() => [])
+        ]);
         setTransactionsList(txs);
+        setPendingWithdrawals(pending);
       }
       setLoadedTabs(prev => ({ ...prev, [tabName]: true }));
     } catch (err) {
@@ -352,7 +356,7 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
         setBannersList(banners);
         setCskhType(cskh.cskh_type || 'built_in');
         setCskhScript(cskh.cskh_script || '');
-      } else if (activeTab === 'members') {
+      } else if (activeTab === 'members' || activeTab === 'transactions') {
         try {
           const pending = await api.getPendingWithdrawals();
           setPendingWithdrawals(pending);
@@ -1578,31 +1582,6 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
       case 'members':
         return (
           <div className="admin-table-card glass-panel" id="admin-members-tab">
-            {pendingWithdrawals.length > 0 && (
-              <div className="admin-pending-withdrawals" id="admin-pending-withdrawals">
-                <h4>Yêu cầu rút tiền chờ duyệt ({pendingWithdrawals.length})</h4>
-                <div className="admin-pending-list">
-                  {pendingWithdrawals.map((tx) => (
-                    <div key={tx.id} className="admin-pending-item">
-                      <div>
-                        <strong>{tx.user_name}</strong> — {tx.phone}
-                        <p>
-                          {formatPriceVND(tx.amount)} · {tx.bank_name} · {tx.account_number} · {tx.account_holder}
-                        </p>
-                      </div>
-                      <div className="admin-pending-actions">
-                        <button type="button" className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleApproveWithdraw(tx.id)}>
-                          Duyệt
-                        </button>
-                        <button type="button" className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleRejectWithdraw(tx.id)}>
-                          Từ chối
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             <div className="admin-card-header-flex">
               <h3>Thành viên Hệ thống</h3>
               <div style={{ display: 'flex', gap: '12px' }}>
@@ -1789,6 +1768,31 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
       case 'transactions':
         return (
           <div className="admin-table-card glass-panel" id="admin-transactions-tab">
+            {pendingWithdrawals.length > 0 && (
+              <div className="admin-pending-withdrawals" id="admin-pending-withdrawals" style={{ marginBottom: '28px' }}>
+                <h4>Yêu cầu rút tiền chờ duyệt ({pendingWithdrawals.length})</h4>
+                <div className="admin-pending-list">
+                  {pendingWithdrawals.map((tx) => (
+                    <div key={tx.id} className="admin-pending-item">
+                      <div>
+                        <strong>{tx.user_name}</strong> — {tx.phone}
+                        <p>
+                          {formatPriceVND(tx.amount)} · {tx.bank_name} · {tx.account_number} · {tx.account_holder}
+                        </p>
+                      </div>
+                      <div className="admin-pending-actions">
+                        <button type="button" className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleApproveWithdraw(tx.id)}>
+                          Duyệt
+                        </button>
+                        <button type="button" className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleRejectWithdraw(tx.id)}>
+                          Từ chối
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="admin-card-header-flex">
               <h3>Lịch sử Giao dịch Ví</h3>
               <input
