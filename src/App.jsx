@@ -98,7 +98,7 @@ export default function App() {
     };
 
     syncUserData();
-    const interval = setInterval(syncUserData, 8000);
+    const interval = setInterval(syncUserData, 5000);
     return () => clearInterval(interval);
   }, [currentUser?.phone, currentUser?.allowed_categories, currentUser?.is_frozen, currentUser?.name]);
 

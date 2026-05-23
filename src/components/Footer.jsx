@@ -268,17 +268,16 @@ export default function Footer({ storeName = 'Miinto', currentUser, currentView,
   useEffect(() => {
     if (activeModal !== 'cart' || !currentUser?.phone) return;
     const fetchBalance = async () => {
-      setWalletLoading(true);
       try {
         const result = await api.getWallet(currentUser.phone, currentUser);
         setWalletBalance(result.balance || 0);
       } catch (err) {
         setWalletBalance(0);
-      } finally {
-        setWalletLoading(false);
       }
     };
     fetchBalance();
+    const interval = setInterval(fetchBalance, 5000);
+    return () => clearInterval(interval);
   }, [activeModal, currentUser?.phone]);
 
   useEffect(() => {

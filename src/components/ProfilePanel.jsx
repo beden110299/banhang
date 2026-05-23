@@ -45,6 +45,8 @@ export default function ProfilePanel({
 
   useEffect(() => {
     loadWallet();
+    const interval = setInterval(loadWallet, 5000);
+    return () => clearInterval(interval);
   }, [currentUser.phone]);
 
   const handleDeposit = () => {

@@ -76,6 +76,8 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
       }
     };
     loadOffered();
+    const interval = setInterval(loadOffered, 5000);
+    return () => clearInterval(interval);
   }, [currentUser?.phone, currentUser?.role]);
 
   const categoryIconMap = useMemo(() => {
