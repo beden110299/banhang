@@ -37,6 +37,9 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
       try {
         const cats = await api.getCategories();
         setCategoriesList(cats);
+        if (cats && cats.length > 0) {
+          setSelectedCategory(cats[0].name);
+        }
 
         const prods = await api.getProducts();
         setProductsList(prods);
@@ -83,7 +86,7 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
     return map;
   }, [categoriesList]);
 
-  const categories = ['Tất cả', ...categoriesList.map((c) => c.name)];
+  const categories = categoriesList.map((c) => c.name);
 
   const allowedCats = useMemo(() => {
     if (!currentUser) return ['Mỹ Phẩm 10%'];
@@ -101,7 +104,7 @@ export default function Home({ storeName, currentUser, addToast, cartItems = [],
   const filteredProducts = productsList.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           (product.desc && product.desc.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'Tất cả' || product.category === selectedCategory;
+    const matchesCategory = product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   }).sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
 

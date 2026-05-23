@@ -127,8 +127,7 @@ async function main() {
 
   const r2 = getR2Config();
   if (!r2.ok) {
-    console.error('❌ Chưa cấu hình Cloudflare R2 trong .env. Thiếu:', r2.missing.join(', '));
-    process.exit(1);
+    console.warn('⚠️  Chưa cấu hình Cloudflare R2 trong .env. Sẽ tự động chuyển đổi ảnh sang Base64.');
   }
 
   const pool = new Pool({
@@ -183,15 +182,21 @@ async function main() {
         let iconUrl;
         try {
           const { buffer, contentType } = await downloadSampleImage(meta.seed);
-          iconUrl = await uploadBufferToR2(
-            r2.client,
-            r2.bucket,
-            r2.publicBase,
-            meta.r2Key,
-            buffer,
-            contentType
-          );
-          totalUploaded++;
+          if (r2.ok) {
+            iconUrl = await uploadBufferToR2(
+              r2.client,
+              r2.bucket,
+              r2.publicBase,
+              meta.r2Key,
+              buffer,
+              contentType
+            );
+            totalUploaded++;
+          } else {
+            const base64Data = buffer.toString('base64');
+            iconUrl = `data:${contentType};base64,${base64Data}`;
+            totalUploaded++;
+          }
         } catch (imgErr) {
           console.error(`  ⚠️  Ảnh lỗi (${meta.name}): ${imgErr.message}`);
           iconUrl = '📦';
