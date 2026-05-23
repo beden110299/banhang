@@ -1940,8 +1940,8 @@ const __dirname = path.dirname(__filename);
 // Serve static files from Vite's production build folder 'dist'
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Catch-all route to serve the React SPA index.html for non-API routes
-app.get('*', (req, res, next) => {
+// Catch-all middleware to serve the React SPA index.html for non-API routes
+app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
     return next();
   }
