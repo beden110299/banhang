@@ -1929,8 +1929,25 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// RUN SERVER
+// RUN SERVER & SERVE INTEGRATED FRONTEND
 // -------------------------------------------------------------
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from Vite's production build folder 'dist'
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Catch-all route to serve the React SPA index.html for non-API routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 app.listen(port, () => {
   console.log(`\n🪐 Miinto API Server is running on port: http://localhost:${port}`);
   console.log(`💡 Serving client endpoints with secure database queries.`);
