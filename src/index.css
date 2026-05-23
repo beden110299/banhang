@@ -1729,23 +1729,26 @@ body {
 
 .desktop-footer-links {
   display: flex;
-  gap: 24px;
+  gap: 70px; /* Significantly increased spacing to display perfectly on PC screens */
 }
 
 .desktop-footer-link {
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
 }
 
 .desktop-footer-link:hover, .desktop-footer-link.active {
   color: var(--primary);
+  background: rgba(238, 77, 45, 0.05); /* Premium light primary hover background */
   text-shadow: none;
 }
 
