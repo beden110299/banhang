@@ -1766,11 +1766,11 @@ export default function AdminDashboard({ storeName, onStoreNameChange, addToast 
                 <div className="admin-pending-list">
                   {pendingWithdrawals.map((tx) => (
                     <div key={tx.id} className="admin-pending-item">
-                      <div>
-                        <strong>{tx.user_name}</strong> — {tx.phone}
-                        <p>
-                          {formatPriceVND(tx.amount)} · {tx.bank_name} · {tx.account_number} · {tx.account_holder}
-                        </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                        <div><strong>Họ tên:</strong> {tx.account_holder} <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>({tx.user_name} — {tx.phone})</span></div>
+                        <div><strong>Ngân Hàng:</strong> {tx.bank_name}</div>
+                        <div><strong>Số TK:</strong> {tx.account_number}</div>
+                        <div><strong>Số Tiền:</strong> <span style={{ color: 'var(--primary)', fontWeight: '700' }}>{formatPriceVND(tx.amount)}</span></div>
                       </div>
                       <div className="admin-pending-actions">
                         <button type="button" className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={() => handleApproveWithdraw(tx.id)}>
