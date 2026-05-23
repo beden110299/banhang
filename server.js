@@ -1017,41 +1017,49 @@ app.post('/api/wallet/withdraw', checkDbConnection, async (req, res) => {
     });
   }
 
+  const client = await pool.connect();
   try {
+    await client.query('BEGIN');
     await ensureWallet(phone);
 
     // Check if user is frozen
-    const userCheck = await db.query('SELECT is_frozen FROM users WHERE phone = $1', [phone]);
+    const userCheck = await client.query('SELECT is_frozen FROM users WHERE phone = $1', [phone]);
     if (userCheck.rows.length > 0 && userCheck.rows[0].is_frozen) {
+      await client.query('ROLLBACK');
       return res.status(403).json({
         error: 'Tài khoản bị đóng băng',
         message: 'Tài khoản của bạn đang bị đóng băng. Không thể thực hiện rút tiền.',
       });
     }
 
-    const walletRes = await db.query('SELECT balance FROM wallets WHERE phone = $1', [phone]);
+    const walletRes = await client.query('SELECT balance FROM wallets WHERE phone = $1 FOR UPDATE', [phone]);
     const balance = Number(walletRes.rows[0]?.balance || 0);
 
     if (withdrawAmount > balance) {
+      await client.query('ROLLBACK');
       return res.status(400).json({
         error: 'Số dư',
         message: 'Số dư ví không đủ để thực hiện lệnh rút.',
       });
     }
 
-    const pendingRes = await db.query(
+    const pendingRes = await client.query(
       `SELECT id FROM wallet_transactions
        WHERE phone = $1 AND type = 'withdraw' AND status = 'pending' LIMIT 1`,
       [phone]
     );
     if (pendingRes.rows.length > 0) {
+      await client.query('ROLLBACK');
       return res.status(409).json({
         error: 'Đang xử lý',
         message: 'Bạn đang có yêu cầu rút tiền chờ duyệt. Vui lòng đợi CSKH xử lý.',
       });
     }
 
-    const txRes = await db.query(
+    // Deduct immediately on request creation to prevent double spending
+    await client.query('UPDATE wallets SET balance = balance - $1 WHERE phone = $2', [withdrawAmount, phone]);
+
+    const txRes = await client.query(
       `INSERT INTO wallet_transactions
         (phone, type, amount, status, bank_name, account_number, account_holder, note)
        VALUES ($1, 'withdraw', $2, 'pending', $3, $4, $5, $6)
@@ -1062,18 +1070,22 @@ app.post('/api/wallet/withdraw', checkDbConnection, async (req, res) => {
         bankName.trim(),
         accountNumber.trim(),
         accountHolder.trim(),
-        'Yêu cầu rút tiền — chờ duyệt',
+        'Yêu cầu rút tiền — chờ duyệt (đã tạm khấu trừ từ ví)',
       ]
     );
 
+    await client.query('COMMIT');
     res.status(201).json({
       success: true,
-      message: 'Đã gửi yêu cầu rút tiền. CSKH sẽ xử lý trong thời gian sớm nhất.',
+      message: 'Đã gửi yêu cầu rút tiền và tạm khấu trừ số dư ví thành công.',
       transaction: txRes.rows[0],
     });
   } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
     console.error(err);
     res.status(500).json({ error: 'Lỗi', message: 'Không thể tạo yêu cầu rút tiền.' });
+  } finally {
+    client.release();
   }
 });
 
@@ -1132,13 +1144,6 @@ app.post('/api/admin/wallet/withdraw/:id/approve', checkDbConnection, async (req
     if (txRes.rows.length === 0) {
       return res.status(404).json({ error: 'Không tìm thấy', message: 'Yêu cầu rút không tồn tại hoặc đã xử lý.' });
     }
-    const tx = txRes.rows[0];
-    const walletRes = await db.query('SELECT balance FROM wallets WHERE phone = $1', [tx.phone]);
-    const balance = Number(walletRes.rows[0]?.balance || 0);
-    if (tx.amount > balance) {
-      return res.status(400).json({ error: 'Số dư', message: 'Số dư không đủ để duyệt lệnh rút.' });
-    }
-    await db.query('UPDATE wallets SET balance = balance - $1 WHERE phone = $2', [tx.amount, tx.phone]);
     await db.query(
       `UPDATE wallet_transactions SET status = 'completed', note = $1 WHERE id = $2`,
       ['Rút tiền — đã duyệt', id]
@@ -1152,21 +1157,37 @@ app.post('/api/admin/wallet/withdraw/:id/approve', checkDbConnection, async (req
 
 app.post('/api/admin/wallet/withdraw/:id/reject', checkDbConnection, async (req, res) => {
   const id = Number(req.params.id);
+  const client = await pool.connect();
   try {
-    const result = await db.query(
-      `UPDATE wallet_transactions
-       SET status = 'rejected', note = $1
-       WHERE id = $2 AND type = 'withdraw' AND status = 'pending'
-       RETURNING id`,
-      ['Rút tiền — bị từ chối', id]
+    await client.query('BEGIN');
+    const txRes = await client.query(
+      `SELECT * FROM wallet_transactions WHERE id = $1 AND type = 'withdraw' AND status = 'pending' FOR UPDATE`,
+      [id]
     );
-    if (result.rows.length === 0) {
+    if (txRes.rows.length === 0) {
+      await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Không tìm thấy', message: 'Yêu cầu rút không tồn tại hoặc đã xử lý.' });
     }
-    res.json({ success: true, message: 'Đã từ chối yêu cầu rút tiền.' });
+    const tx = txRes.rows[0];
+
+    // Refund immediately on rejection
+    await client.query('UPDATE wallets SET balance = balance + $1 WHERE phone = $2', [tx.amount, tx.phone]);
+
+    await client.query(
+      `UPDATE wallet_transactions
+       SET status = 'rejected', note = $1
+       WHERE id = $2`,
+      ['Rút tiền — bị từ chối (đã hoàn trả lại số dư vào ví)', id]
+    );
+
+    await client.query('COMMIT');
+    res.json({ success: true, message: 'Đã từ chối yêu cầu rút tiền và hoàn trả số dư vào ví thành viên.' });
   } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
     console.error(err);
     res.status(500).json({ error: 'Lỗi', message: 'Không thể từ chối rút tiền.' });
+  } finally {
+    client.release();
   }
 });
 
