@@ -1721,7 +1721,7 @@ body {
   border-top: 1px solid var(--border-glass);
   padding: 24px 40px;
   display: flex;
-  justify-content: flex-end; /* Align links with the right side of the container content */
+  justify-content: center; /* Center the grid content horizontally */
   align-items: center;
   width: 100%;
   max-width: 1400px; /* Matches storefront-wrapper max-width perfectly */
@@ -1730,8 +1730,10 @@ body {
 }
 
 .desktop-footer-links {
-  display: flex;
-  gap: 70px; /* Significantly increased spacing to display perfectly on PC screens */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Exactly 4 columns to match product-grid columns */
+  gap: 24px; /* Matches the product-grid gap exactly for perfect vertical alignment */
+  width: 100%; /* Spans 100% of the footer width */
 }
 
 .desktop-footer-link {
@@ -1743,9 +1745,12 @@ body {
   transition: var(--transition-smooth);
   display: flex;
   align-items: center;
+  justify-content: center; /* Center the link content inside its column for geometric precision */
   gap: 8px;
-  padding: 6px 16px;
+  padding: 8px 16px;
   border-radius: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .desktop-footer-link:hover, .desktop-footer-link.active {
