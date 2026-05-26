@@ -179,7 +179,7 @@ export default function ProfilePanel({
                     type="number"
                     className="form-input"
                     min="10000"
-                    step="1000"
+                    step="1"
                     placeholder="Tối thiểu 10.000đ"
                     value={withdrawForm.amount}
                     onChange={(e) => setWithdrawForm({ ...withdrawForm, amount: e.target.value })}
